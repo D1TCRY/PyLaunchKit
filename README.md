@@ -1,519 +1,204 @@
 # PyLaunchKit
 
-PyLaunchKit is a small Windows launcher kit for Python projects. Its goal is to make project startup repeatable and convenient by using a local virtual environment and by allowing the application to be started either from the terminal or through `.vbs` launcher files.
+PyLaunchKit is a small launcher kit for Python projects.
+
+It provides operating-system-specific startup files that prepare a local Python virtual environment, install dependencies only when needed, and run a Python module or script with a predictable command.
+
+Start with the guide for your operating system:
+
+- [Windows guide](Windows/README_WINDOWS.md)
+- [macOS guide](MacOS/README_MACOS.md)
+
+## What PyLaunchKit Does
+
+PyLaunchKit is meant to make Python project startup repeatable.
+
+The launchers handle the common setup work:
+
+- find a usable Python 3 interpreter;
+- create or reuse a local virtual environment;
+- verify that `pip` works inside that environment;
+- install dependencies from `req.txt` only when required;
+- run the default Python entrypoint;
+- allow a different module or file to be selected;
+- pass application arguments after `--`.
 
 By default, PyLaunchKit runs:
 
-```bat
+```text
 python -m src.main
 ```
 
-Therefore, if no options are provided, `run.bat` looks for and runs the Python module `src.main`.
+Each operating system has its own launcher folder and its own detailed README.
 
----
-
-## Included files
-
-### `run.bat`
-
-This is the main project launcher.
-
-Main responsibilities:
-
-- automatically switches to the folder where `run.bat` is located;
-- looks for a system Python interpreter using, in order, `py -3`, `python`, and `python3`;
-- creates or reuses the local virtual environment `env`;
-- checks that `pip` is available inside the virtual environment;
-- installs dependencies from `req.txt` only when the content of `req.txt` changes;
-- stores the SHA-256 hash of `req.txt` in `env\.launcher\req.hash`;
-- allows running either a Python module or an explicit Python file;
-- forwards application arguments written after `--` to the Python application;
-- can show additional diagnostics with `--debug`;
-- can keep the terminal open on errors with `--pause-on-error`.
-
-Default execution:
-
-```bat
-run.bat
-```
-
-Equivalent to:
-
-```bat
-python -m src.main
-```
-
-Run a different module:
-
-```bat
-run.bat --module tools.worker
-```
-
-Run a Python file:
-
-```bat
-run.bat --file main.py
-```
-
-Or:
-
-```bat
-run.bat --file tools\script.py
-```
-
-Use explicit mode and target:
-
-```bat
-run.bat --mode module --target src.main
-run.bat --mode file --target tools\script.py
-```
-
-Pass arguments to the Python application:
-
-```bat
-run.bat --module src.main -- --name Mario --verbose
-```
-
-In this case:
-
-- `--module src.main` is read by the launcher;
-- everything after `--` is passed to the Python application.
-
-Maintenance operations:
-
-```bat
-run.bat --force-setup
-run.bat --update-tools
-run.bat --recreate-venv
-```
-
-Meaning:
-
-- `--force-setup`: reinstalls dependencies from `req.txt` even if the hash has not changed;
-- `--update-tools`: upgrades `pip`, `setuptools`, and `wheel`;
-- `--recreate-venv`: deletes and fully recreates the local virtual environment `env`.
-
-Diagnostics:
-
-```bat
-run.bat --debug
-```
-
-Shows useful information such as the project folder, virtual environment, execution mode, target, and `req.txt` hash.
-
----
-
-### `run_hidden.vbs`
-
-This Visual Basic Script launcher starts `run.bat` without showing a terminal window.
-
-It is useful for graphical applications, for example applications created with:
-
-- `tkinter`;
-- `customtkinter`;
-- `PySide`;
-- `PyQt`;
-- `wxPython`.
-
-The file:
-
-- detects its own folder;
-- builds the path to `run.bat` in the same folder;
-- sets the current directory to the project folder;
-- starts `run.bat` with a hidden window.
-
-Current behavior:
-
-```vbscript
-objShell.Run Chr(34) & strBatch & Chr(34), 0, False
-```
-
-Where:
-
-- `0` means hidden window;
-- `False` means the `.vbs` script does not wait for the program to finish.
-
-Typical use:
-
-```text
-Double-click run_hidden.vbs
-```
-
----
-
-### `run_terminal.vbs`
-
-This Visual Basic Script launcher starts `run.bat` with a visible terminal.
-
-It is useful for text-based applications or when you want to see output, errors, and logs while the program runs.
-
-The file:
-
-- detects its own folder;
-- builds the path to `run.bat` in the same folder;
-- sets the current directory to the project folder;
-- opens `cmd.exe`;
-- runs `run.bat`;
-- closes the terminal when execution finishes.
-
-Current behavior:
-
-```vbscript
-objShell.Run "cmd.exe /c " & Chr(34) & strBatch & Chr(34), 1, True
-```
-
-Where:
-
-- `cmd.exe /c` runs the command and closes the terminal at the end;
-- `1` shows the window in normal mode;
-- `True` makes the `.vbs` script wait until the program finishes.
-
-Typical use:
-
-```text
-Double-click run_terminal.vbs
-```
-
----
-
-### `README.md`
-
-This is the project documentation file.
-
-This README explains:
-
-- the purpose of the project;
-- the role of each file;
-- the required filesystem structure;
-- how to use `run.bat`;
-- how to use the `.vbs` launchers;
-- how to pass arguments from `.vbs` files to `run.bat`.
-
----
-
-## Required filesystem structure
-
-Recommended minimal structure:
+## Repository Layout
 
 ```text
 PyLaunchKit/
-├─ run.bat
-├─ run_hidden.vbs
-├─ run_terminal.vbs
-├─ README.md
-├─ req.txt
-├─ src/
-│  └─ main.py
-└─ env/
-   └─ ...
+|-- README.md
+|-- Windows/
+|   |-- README_WINDOWS.md
+|   |-- run.bat
+|   |-- run_terminal.vbs
+|   `-- run_hidden.vbs
+`-- MacOS/
+    |-- README_MACOS.md
+    |-- run.sh
+    |-- run_terminal.command
+    |-- run_gui.command
+    `-- run_gui.applescript
 ```
 
-Important notes:
+The application files such as `src/main.py` and `req.txt` must be placed where the selected OS launcher expects them. See the OS-specific guide before copying the launcher into a real project.
 
-- `run.bat`, `run_hidden.vbs`, and `run_terminal.vbs` must be in the same folder;
-- `req.txt`, if present, must be in the same folder as `run.bat`;
-- the default behavior requires `src\main.py`;
-- the virtual environment `env` is created automatically by `run.bat`;
-- the `env` folder should not be committed to Git;
-- the `env\.launcher` folder is used internally by PyLaunchKit to store launcher state.
+## Windows
 
-Minimal structure for the default behavior:
+Use the Windows files when running the project on Windows:
 
 ```text
-PyLaunchKit/
-├─ run.bat
-├─ req.txt
-└─ src/
-   └─ main.py
+Windows/run.bat
+Windows/run_terminal.vbs
+Windows/run_hidden.vbs
 ```
 
-Example `src/main.py`:
+Typical command:
 
-```python
-print("Hello from PyLaunchKit")
+```bat
+Windows\run.bat
 ```
 
-Example `req.txt`:
+The Windows version uses:
+
+- `run.bat` as the main launcher;
+- `.vbs` files for double-click startup;
+- a local `env` virtual environment;
+- `req.txt` checksum tracking to avoid repeated dependency installation.
+
+Read the full guide:
+
+[Windows/README_WINDOWS.md](Windows/README_WINDOWS.md)
+
+## macOS
+
+Use the macOS files when running the project on macOS:
 
 ```text
-customtkinter
-requests
+MacOS/run.sh
+MacOS/run_terminal.command
+MacOS/run_gui.command
+MacOS/run_gui.applescript
 ```
 
-If the project has no external dependencies, `req.txt` can be omitted. In that case, `run.bat` skips dependency installation.
+Typical command from the project root:
 
----
-
-## Technical behavior of `run.bat`
-
-### 1. Project directory
-
-At startup, `run.bat` gets its own folder with:
-
-```bat
-set "SCRIPT_DIR=%~dp0"
-cd /d "%SCRIPT_DIR%"
+```bash
+./MacOS/run.sh
 ```
 
-This ensures that execution always starts from the project directory, even when the file is opened by double-clicking or launched through a `.vbs` file.
+The macOS version uses:
 
-### 2. Virtual environment
+- `run.sh` as the main launcher;
+- `.command` files for Finder startup;
+- optional AppleScript for GUI-style startup;
+- a local `.venv` virtual environment;
+- `req.txt` checksum tracking to avoid repeated dependency installation.
 
-The virtual environment is located at:
+Read the full guide:
+
+[MacOS/README_MACOS.md](MacOS/README_MACOS.md)
+
+## Running a Module
+
+The default target is:
 
 ```text
-env/
+src.main
 ```
 
-The Python interpreter used by the project is:
+To run another module, use the OS-specific launcher:
+
+```bat
+Windows\run.bat --module src.cli
+```
+
+```bash
+./MacOS/run.sh --module src.cli
+```
+
+## Running a Python File
+
+To run a file instead of a module:
+
+```bat
+Windows\run.bat --file tools\script.py
+```
+
+```bash
+./MacOS/run.sh --file tools/script.py
+```
+
+## Passing Application Arguments
+
+Use `--` to separate launcher arguments from application arguments.
+
+Everything after `--` is passed to the Python application.
+
+Windows:
+
+```bat
+Windows\run.bat --module src.cli -- --input "data\my file.txt"
+```
+
+macOS:
+
+```bash
+./MacOS/run.sh --module src.cli -- --input "data/my file.txt"
+```
+
+## Dependency Handling
+
+`req.txt` is optional.
+
+If it exists, PyLaunchKit installs it into the local virtual environment. A checksum is saved after successful installation, so the dependencies are not reinstalled on every launch.
+
+When `req.txt` changes, the checksum changes and PyLaunchKit installs the updated dependencies on the next run.
+
+## Maintenance Commands
+
+Force dependency installation:
 
 ```text
-env\Scripts\python.exe
+--force-setup
 ```
 
-If it does not exist, `run.bat` creates it with:
-
-```bat
-python -m venv env
-```
-
-### 3. Dependencies
-
-If `req.txt` exists, the launcher computes a SHA-256 hash of the file.
-
-The hash is stored in:
+Upgrade `pip`, `setuptools`, and `wheel`:
 
 ```text
-env\.launcher\req.hash
+--update-tools
 ```
 
-On the next run:
-
-- if the hash is the same, dependencies are not reinstalled;
-- if the hash is different, `pip install -r req.txt` is executed;
-- if `--force-setup` is used, dependencies are reinstalled anyway.
-
-This prevents `pip install` from running on every startup.
-
-### 4. Python entrypoint
-
-The launcher supports two modes:
+Recreate the local virtual environment:
 
 ```text
-module
-file
+--recreate-venv
 ```
 
-Module mode:
+These options are documented in detail in the Windows and macOS guides.
 
-```bat
-run.bat --module src.main
-```
+## Important OS Differences
 
-Runs:
+Windows uses `.bat` and `.vbs` files. Hidden double-click startup is possible through Windows Script Host.
 
-```bat
-python -m src.main
-```
+macOS uses shell scripts, `.command` files, and optionally AppleScript or Automator. A `.command` file opened from Finder normally opens Terminal.
 
-File mode:
+The virtual environment folder name is also different:
 
-```bat
-run.bat --file tools\script.py
-```
+- Windows: `env`
+- macOS: `.venv`
 
-Runs:
+## Next Step
 
-```bat
-python tools\script.py
-```
+Open the guide for your operating system:
 
-The default is:
-
-```bat
-run.bat --module src.main
-```
-
----
-
-## Passing arguments to the Python application from `run.bat`
-
-Arguments meant for the Python application must be written after `--`.
-
-Example:
-
-```bat
-run.bat --module src.main -- --user Mario --debug-app
-```
-
-In Python, they can be read normally from `sys.argv`:
-
-```python
-import sys
-
-print(sys.argv)
-```
-
-Conceptual output:
-
-```text
-['...', '--user', 'Mario', '--debug-app']
-```
-
----
-
-## Technical explanation: how `.vbs` files can pass command-line arguments to `run.bat`
-
-The current `.vbs` files start `run.bat`, but they do not automatically forward the arguments received by the `.vbs` script.
-
-To enable this behavior, the `.vbs` launcher must:
-
-1. read the arguments received through `WScript.Arguments`;
-2. safely quote each argument;
-3. append those arguments to the command that starts `run.bat`.
-
-### Updated `run_hidden.vbs` with argument forwarding
-
-```vbscript
-Set objShell = CreateObject("WScript.Shell")
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-
-strPath = objFSO.GetParentFolderName(WScript.ScriptFullName)
-strBatch = strPath & "\run.bat"
-
-objShell.CurrentDirectory = strPath
-
-strArgs = ""
-For Each arg In WScript.Arguments
-    strArgs = strArgs & " " & Chr(34) & Replace(arg, Chr(34), Chr(34) & Chr(34)) & Chr(34)
-Next
-
-' 0 = hidden window
-' False = do not wait for the program to finish
-objShell.Run Chr(34) & strBatch & Chr(34) & strArgs, 0, False
-
-Set objShell = Nothing
-Set objFSO = Nothing
-```
-
-Usage example:
-
-```bat
-wscript run_hidden.vbs --module src.main -- --name Mario
-```
-
-The effective command becomes, conceptually:
-
-```bat
-run.bat --module src.main -- --name Mario
-```
-
-### Updated `run_terminal.vbs` with argument forwarding
-
-```vbscript
-Set objShell = CreateObject("WScript.Shell")
-Set objFSO = CreateObject("Scripting.FileSystemObject")
-
-strPath = objFSO.GetParentFolderName(WScript.ScriptFullName)
-strBatch = strPath & "\run.bat"
-
-objShell.CurrentDirectory = strPath
-
-strArgs = ""
-For Each arg In WScript.Arguments
-    strArgs = strArgs & " " & Chr(34) & Replace(arg, Chr(34), Chr(34) & Chr(34)) & Chr(34)
-Next
-
-' cmd.exe /c runs the command and closes the terminal at the end
-objShell.Run "cmd.exe /c " & Chr(34) & Chr(34) & strBatch & Chr(34) & strArgs & Chr(34), 1, True
-
-Set objShell = Nothing
-Set objFSO = Nothing
-```
-
-Usage example:
-
-```bat
-wscript run_terminal.vbs --file tools\script.py -- --input data.txt
-```
-
-The effective command becomes, conceptually:
-
-```bat
-run.bat --file tools\script.py -- --input data.txt
-```
-
-### Why `WScript.Arguments` is required
-
-When a `.vbs` script is started with command-line arguments, Windows exposes them through:
-
-```vbscript
-WScript.Arguments
-```
-
-Without iterating over `WScript.Arguments`, the `.vbs` script has no way to forward those arguments to `run.bat`.
-
-### Why arguments must be quoted
-
-Arguments may contain spaces:
-
-```text
-"Mario Rossi"
-"C:\Users\Mario Rossi\Desktop\file.txt"
-```
-
-To prevent them from being split into multiple parts, each argument is wrapped in double quotes:
-
-```vbscript
-Chr(34) & arg & Chr(34)
-```
-
-Additionally, any double quotes inside the argument are doubled:
-
-```vbscript
-Replace(arg, Chr(34), Chr(34) & Chr(34))
-```
-
-This makes argument forwarding more robust.
-
----
-
-## Complete practical examples
-
-### GUI application without terminal
-
-```text
-Double-click run_hidden.vbs
-```
-
-By default, this requires:
-
-```text
-src\main.py
-```
-
-### Text-based application with visible terminal
-
-```text
-Double-click run_terminal.vbs
-```
-
-The terminal is shown during execution and closes when the program exits.
-
-### Manual startup from terminal
-
-```bat
-run.bat
-```
-
-### Manual startup with application arguments
-
-```bat
-run.bat --module src.main -- --config config.json --verbose
-```
-
-### Full virtual environment recreation
-
-```bat
-run.bat --recreate-venv
-```
+- [Windows guide](Windows/README_WINDOWS.md)
+- [macOS guide](MacOS/README_MACOS.md)
