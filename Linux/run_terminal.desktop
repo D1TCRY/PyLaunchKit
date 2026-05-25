@@ -1,0 +1,20 @@
+# PyLaunchKit terminal launcher for Linux desktop environments.
+#
+# Terminal=true is not equally reliable across all desktop environments, so
+# this file starts run_terminal.sh instead. The wrapper detects a supported
+# terminal emulator and then runs run.sh inside it.
+#
+# Some desktop environments require launchers to be executable or trusted:
+#   chmod +x run_terminal.desktop
+#   chmod +x run_terminal.sh
+#   chmod +x run.sh
+# Then use "Allow Launching" or "Trust this launcher" in the file manager if required.
+
+[Desktop Entry]
+Type=Application
+Name=PyLaunchKit Terminal
+Comment=Run PyLaunchKit terminal application
+Exec=/usr/bin/env bash -c "entry=\$1; if [ -z \"\$entry\" ]; then exit 1; fi; decoder='import os,sys,urllib.parse; s=sys.argv[1]; u=urllib.parse.urlparse(s); p=u.path if u.scheme==\"file\" else s; print(os.path.dirname(urllib.parse.unquote(p)))'; dir=; if command -v python3 >/dev/null 2>&1; then dir=\$(python3 -c \"\$decoder\" \"\$entry\") || exit 1; elif command -v python >/dev/null 2>&1; then dir=\$(python -c \"\$decoder\" \"\$entry\") || exit 1; else case \"\$entry\" in file://*) entry=\"\${entry#file://}\"; entry=\"\${entry#localhost}\";; esac; dir=\"\$(dirname -- \"\$entry\")\"; fi; exec /usr/bin/env bash \"\$dir/run_terminal.sh\"" pylaunchkit %k
+Terminal=false
+Categories=Development;Utility;
+StartupNotify=true

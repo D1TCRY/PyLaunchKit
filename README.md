@@ -8,6 +8,7 @@ Start with the guide for your operating system:
 
 - [Windows guide](Windows/README_WINDOWS.md)
 - [macOS guide](MacOS/README_MACOS.md)
+- [Linux guide](Linux/README_LINUX.md)
 
 ## What PyLaunchKit Does
 
@@ -41,12 +42,18 @@ PyLaunchKit/
 |   |-- run.bat
 |   |-- run_terminal.vbs
 |   `-- run_hidden.vbs
-`-- MacOS/
-    |-- README_MACOS.md
+|-- MacOS/
+|   |-- README_MACOS.md
+|   |-- run.sh
+|   |-- run_terminal.command
+|   |-- run_gui.command
+|   `-- run_gui.applescript
+`-- Linux/
+    |-- README_LINUX.md
     |-- run.sh
-    |-- run_terminal.command
-    |-- run_gui.command
-    `-- run_gui.applescript
+    |-- run_gui.desktop
+    |-- run_terminal.desktop
+    `-- run_terminal.sh
 ```
 
 The application files such as `src/main.py` and `req.txt` must be placed where the selected OS launcher expects them. See the OS-specific guide before copying the launcher into a real project.
@@ -107,6 +114,35 @@ Read the full guide:
 
 [MacOS/README_MACOS.md](MacOS/README_MACOS.md)
 
+## Linux
+
+Use the Linux files when running the project on Linux:
+
+```text
+Linux/run.sh
+Linux/run_gui.desktop
+Linux/run_terminal.desktop
+Linux/run_terminal.sh
+```
+
+Typical command from the project root:
+
+```bash
+./Linux/run.sh
+```
+
+The Linux version uses:
+
+- `run.sh` as the main launcher;
+- `.desktop` files for graphical desktop startup;
+- `run_terminal.sh` as a wrapper for terminal-based desktop startup;
+- a local `.venv` virtual environment;
+- `req.txt` checksum tracking to avoid repeated dependency installation.
+
+Read the full guide:
+
+[Linux/README_LINUX.md](Linux/README_LINUX.md)
+
 ## Running a Module
 
 The default target is:
@@ -125,6 +161,10 @@ Windows\run.bat --module src.cli
 ./MacOS/run.sh --module src.cli
 ```
 
+```bash
+./Linux/run.sh --module src.cli
+```
+
 ## Running a Python File
 
 To run a file instead of a module:
@@ -135,6 +175,10 @@ Windows\run.bat --file tools\script.py
 
 ```bash
 ./MacOS/run.sh --file tools/script.py
+```
+
+```bash
+./Linux/run.sh --file tools/script.py
 ```
 
 ## Passing Application Arguments
@@ -153,6 +197,12 @@ macOS:
 
 ```bash
 ./MacOS/run.sh --module src.cli -- --input "data/my file.txt"
+```
+
+Linux:
+
+```bash
+./Linux/run.sh --module src.cli -- --input "data/my file.txt"
 ```
 
 ## Dependency Handling
@@ -183,7 +233,7 @@ Recreate the local virtual environment:
 --recreate-venv
 ```
 
-These options are documented in detail in the Windows and macOS guides.
+These options are documented in detail in the Windows, macOS, and Linux guides.
 
 ## Important OS Differences
 
@@ -191,10 +241,13 @@ Windows uses `.bat` and `.vbs` files. Hidden double-click startup is possible th
 
 macOS uses shell scripts, `.command` files, and optionally AppleScript or Automator. A `.command` file opened from Finder normally opens Terminal.
 
+Linux uses shell scripts and `.desktop` files. Hidden-style startup is normally handled with `Terminal=false`, while terminal startup depends on the desktop environment and available terminal emulator.
+
 The virtual environment folder name is also different:
 
 - Windows: `env`
 - macOS: `.venv`
+- Linux: `.venv`
 
 ## Next Step
 
@@ -202,3 +255,4 @@ Open the guide for your operating system:
 
 - [Windows guide](Windows/README_WINDOWS.md)
 - [macOS guide](MacOS/README_MACOS.md)
+- [Linux guide](Linux/README_LINUX.md)
