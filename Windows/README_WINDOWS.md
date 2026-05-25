@@ -105,49 +105,48 @@ env\.launcher\
 
 ## Required Filesystem Structure
 
-The Windows launcher files belong in the `Windows` folder.
+In this repository, the Windows launcher files are stored in the `Windows/` source folder.
 
-The current Windows launcher uses its own folder as the project folder. That means `req.txt`, `src\`, and `env\` are expected next to `run.bat` unless you edit `run.bat` for a different layout.
+In a real Windows project, copy the launcher files into your own `ProjectDirectory/`.
+
+The Windows launcher uses the folder that contains `run.bat` as the project folder. That means `req.txt`, `src\`, and `env\` are expected next to `run.bat` unless you edit `run.bat` for a different layout.
 
 Recommended Windows structure:
 
 ```text
-PyLaunchKit/
-|-- README.md
-`-- Windows/
-    |-- README_WINDOWS.md
-    |-- run.bat
-    |-- run_terminal.vbs
-    |-- run_hidden.vbs
-    |-- req.txt
-    |-- env/
-    `-- src/
-        |-- __init__.py
-        `-- main.py
+ProjectDirectory/
+|-- run.bat
+|-- run_hidden.vbs
+|-- run_terminal.vbs
+|-- req.txt
+|-- src/
+|   |-- __init__.py
+|   `-- main.py
+`-- env/
 ```
 
 Required files:
 
-- `Windows\run.bat`
-- `Windows\src\main.py`, unless you always use `--module` or `--file` with another target
+- `run.bat`
+- `src\main.py`, unless you always use `--module` or `--file` with another target
 
 Optional files:
 
-- `Windows\run_terminal.vbs`
-- `Windows\run_hidden.vbs`
-- `Windows\req.txt`
-- `Windows\env\`, created automatically
+- `run_hidden.vbs`
+- `run_terminal.vbs`
+- `req.txt`
+- `env\`, created automatically
 
-If you are inside the `Windows` folder, use:
+If you are inside `ProjectDirectory/`, use:
 
 ```bat
 run.bat
 ```
 
-If you are in the project root, use:
+If you are in the parent folder of `ProjectDirectory/`, use:
 
 ```bat
-Windows\run.bat
+ProjectDirectory\run.bat
 ```
 
 ## First Launch
@@ -411,18 +410,18 @@ Only change these defaults if you want a different target for every launch.
 
 ### `run.bat` is not recognized
 
-You are probably not in the `Windows` folder and did not include the path.
+You are probably not in the folder that contains `run.bat` and did not include the path.
 
-From the project root, run:
-
-```bat
-Windows\run.bat
-```
-
-From inside the `Windows` folder, run:
+From `ProjectDirectory/`, run:
 
 ```bat
 run.bat
+```
+
+From the parent folder of `ProjectDirectory/`, run:
+
+```bat
+ProjectDirectory\run.bat
 ```
 
 ### Python not found

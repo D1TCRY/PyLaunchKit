@@ -109,19 +109,23 @@ Do not commit `.venv/` to version control.
 
 ## Required Filesystem Layout
 
-Typical project layout:
+In this repository, the Linux launcher files are stored in the `Linux/` source folder.
+
+In a real Linux project, copy the launcher files into your own `ProjectDirectory/`.
+
+Recommended Linux structure:
 
 ```text
-PyLaunchKit/
-├── run.sh
-├── run_gui.desktop
-├── run_terminal.desktop
-├── run_terminal.sh
-├── req.txt
-├── .venv/
-└── src/
-    ├── __init__.py
-    └── main.py
+ProjectDirectory/
+|-- run.sh
+|-- run_gui.desktop
+|-- run_terminal.desktop
+|-- run_terminal.sh
+|-- req.txt
+|-- src/
+|   |-- __init__.py
+|   `-- main.py
+`-- .venv/
 ```
 
 Required files:
@@ -139,7 +143,7 @@ Optional files:
 
 `.venv/` is created automatically. `req.txt` is optional. The `.desktop` files are only needed for double-click startup from a graphical desktop environment.
 
-If you keep the Linux launcher files inside a `Linux/` folder, `run.sh` resolves the project directory as the parent directory of that folder. If you copy the Linux files into the root of your own project, the project directory is the directory containing `run.sh`.
+With the recommended layout, the project directory is the directory containing `run.sh`.
 
 ## First Launch
 
@@ -671,8 +675,8 @@ File execution is useful for standalone scripts, maintenance tools, and one-off 
 
 ```text
 src/
-├── __init__.py
-└── main.py
+|-- __init__.py
+`-- main.py
 ```
 
 It encourages imports that work consistently when the project grows beyond a single script.

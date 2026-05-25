@@ -129,47 +129,48 @@ PyLaunchKit stores its internal dependency state inside:
 
 ## Required Filesystem Structure
 
-The macOS launcher files belong in the `MacOS` folder. The project files live in the project root:
+In this repository, the macOS launcher files are stored in the `MacOS/` source folder.
+
+In a real macOS project, copy the launcher files into your own `ProjectDirectory/`.
+
+Recommended macOS structure:
 
 ```text
-PyLaunchKit/
-|-- README.md
-|-- MacOS/
-|   |-- README_MACOS.md
-|   |-- run.sh
-|   |-- run_terminal.command
-|   |-- run_gui.command
-|   `-- run_gui.applescript
+ProjectDirectory/
+|-- run.sh
+|-- run_gui.applescript
+|-- run_gui.command
+|-- run_terminal.command
 |-- req.txt
-|-- .venv/
-`-- src/
-    |-- __init__.py
-    `-- main.py
+|-- src/
+|   |-- __init__.py
+|   `-- main.py
+`-- .venv/
 ```
 
 Required files:
 
-- `MacOS/run.sh`
+- `run.sh`
 - `src/main.py`, unless you always use `--module` or `--file` with another target
 
 Optional files:
 
-- `MacOS/run_terminal.command`
-- `MacOS/run_gui.command`
-- `MacOS/run_gui.applescript`
+- `run_gui.applescript`
+- `run_gui.command`
+- `run_terminal.command`
 - `req.txt`
 - `.venv/`, created automatically
 
-If you are inside the `MacOS` folder, use:
+If you are inside `ProjectDirectory/`, use:
 
 ```bash
 ./run.sh
 ```
 
-If you are in the project root, use:
+If you are in the parent folder of `ProjectDirectory/`, use:
 
 ```bash
-./MacOS/run.sh
+./ProjectDirectory/run.sh
 ```
 
 ## First Launch
@@ -361,7 +362,7 @@ Because the Python process is backgrounded, the AppleScript launcher reports lau
 
 ## Permissions
 
-From the `MacOS` folder, run:
+From `ProjectDirectory/`, run:
 
 ```bash
 chmod +x run.sh
@@ -433,7 +434,7 @@ Only change this if you want a different default for every launch.
 
 The launcher is probably not executable.
 
-Run this from the `MacOS` folder:
+Run this from `ProjectDirectory/`:
 
 ```bash
 chmod +x run.sh run_terminal.command run_gui.command

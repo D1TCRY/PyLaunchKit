@@ -30,9 +30,9 @@ By default, PyLaunchKit runs:
 python -m src.main
 ```
 
-Each operating system has its own launcher folder and its own detailed README.
+Each operating system has its own source folder in this repository and its own detailed README.
 
-## Repository Layout
+## Repository Source Layout
 
 ```text
 PyLaunchKit/
@@ -40,14 +40,14 @@ PyLaunchKit/
 |-- Windows/
 |   |-- README_WINDOWS.md
 |   |-- run.bat
-|   |-- run_terminal.vbs
-|   `-- run_hidden.vbs
+|   |-- run_hidden.vbs
+|   `-- run_terminal.vbs
 |-- MacOS/
 |   |-- README_MACOS.md
 |   |-- run.sh
-|   |-- run_terminal.command
+|   |-- run_gui.applescript
 |   |-- run_gui.command
-|   `-- run_gui.applescript
+|   `-- run_terminal.command
 `-- Linux/
     |-- README_LINUX.md
     |-- run.sh
@@ -56,22 +56,72 @@ PyLaunchKit/
     `-- run_terminal.sh
 ```
 
-The application files such as `src/main.py` and `req.txt` must be placed where the selected OS launcher expects them. See the OS-specific guide before copying the launcher into a real project.
+This is the layout of the PyLaunchKit repository, not the recommended layout for your application.
+
+For a real project, copy the launcher files for your operating system into your own project directory. The project files such as `req.txt`, `src/main.py`, and the local virtual environment should live with those launchers as shown below.
+
+## Recommended Project Layouts
+
+Windows:
+
+```text
+ProjectDirectory/
+|-- run.bat
+|-- run_hidden.vbs
+|-- run_terminal.vbs
+|-- req.txt
+|-- src/
+|   |-- __init__.py
+|   `-- main.py
+`-- env/
+```
+
+macOS:
+
+```text
+ProjectDirectory/
+|-- run.sh
+|-- run_gui.applescript
+|-- run_gui.command
+|-- run_terminal.command
+|-- req.txt
+|-- src/
+|   |-- __init__.py
+|   `-- main.py
+`-- .venv/
+```
+
+Linux:
+
+```text
+ProjectDirectory/
+|-- run.sh
+|-- run_gui.desktop
+|-- run_terminal.desktop
+|-- run_terminal.sh
+|-- req.txt
+|-- src/
+|   |-- __init__.py
+|   `-- main.py
+`-- .venv/
+```
+
+The virtual environment folder is created automatically. `req.txt` is optional, but when it exists it should stay in `ProjectDirectory/`.
 
 ## Windows
 
-Use the Windows files when running the project on Windows:
+For Windows projects, copy these files from `Windows/` into `ProjectDirectory/`:
 
 ```text
-Windows/run.bat
-Windows/run_terminal.vbs
-Windows/run_hidden.vbs
+run.bat
+run_hidden.vbs
+run_terminal.vbs
 ```
 
 Typical command:
 
 ```bat
-Windows\run.bat
+run.bat
 ```
 
 The Windows version uses:
@@ -87,19 +137,19 @@ Read the full guide:
 
 ## macOS
 
-Use the macOS files when running the project on macOS:
+For macOS projects, copy these files from `MacOS/` into `ProjectDirectory/`:
 
 ```text
-MacOS/run.sh
-MacOS/run_terminal.command
-MacOS/run_gui.command
-MacOS/run_gui.applescript
+run.sh
+run_gui.applescript
+run_gui.command
+run_terminal.command
 ```
 
-Typical command from the project root:
+Typical command from `ProjectDirectory/`:
 
 ```bash
-./MacOS/run.sh
+./run.sh
 ```
 
 The macOS version uses:
@@ -116,19 +166,19 @@ Read the full guide:
 
 ## Linux
 
-Use the Linux files when running the project on Linux:
+For Linux projects, copy these files from `Linux/` into `ProjectDirectory/`:
 
 ```text
-Linux/run.sh
-Linux/run_gui.desktop
-Linux/run_terminal.desktop
-Linux/run_terminal.sh
+run.sh
+run_gui.desktop
+run_terminal.desktop
+run_terminal.sh
 ```
 
-Typical command from the project root:
+Typical command from `ProjectDirectory/`:
 
 ```bash
-./Linux/run.sh
+./run.sh
 ```
 
 The Linux version uses:
@@ -154,15 +204,15 @@ src.main
 To run another module, use the OS-specific launcher:
 
 ```bat
-Windows\run.bat --module src.cli
+run.bat --module src.cli
 ```
 
 ```bash
-./MacOS/run.sh --module src.cli
+./run.sh --module src.cli
 ```
 
 ```bash
-./Linux/run.sh --module src.cli
+./run.sh --module src.cli
 ```
 
 ## Running a Python File
@@ -170,15 +220,15 @@ Windows\run.bat --module src.cli
 To run a file instead of a module:
 
 ```bat
-Windows\run.bat --file tools\script.py
+run.bat --file tools\script.py
 ```
 
 ```bash
-./MacOS/run.sh --file tools/script.py
+./run.sh --file tools/script.py
 ```
 
 ```bash
-./Linux/run.sh --file tools/script.py
+./run.sh --file tools/script.py
 ```
 
 ## Passing Application Arguments
@@ -190,19 +240,19 @@ Everything after `--` is passed to the Python application.
 Windows:
 
 ```bat
-Windows\run.bat --module src.cli -- --input "data\my file.txt"
+run.bat --module src.cli -- --input "data\my file.txt"
 ```
 
 macOS:
 
 ```bash
-./MacOS/run.sh --module src.cli -- --input "data/my file.txt"
+./run.sh --module src.cli -- --input "data/my file.txt"
 ```
 
 Linux:
 
 ```bash
-./Linux/run.sh --module src.cli -- --input "data/my file.txt"
+./run.sh --module src.cli -- --input "data/my file.txt"
 ```
 
 ## Dependency Handling
