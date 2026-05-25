@@ -114,22 +114,16 @@ Recommended Windows structure:
 ```text
 PyLaunchKit/
 |-- README.md
-|-- Windows/
-|   |-- README_WINDOWS.md
-|   |-- run.bat
-|   |-- run_terminal.vbs
-|   |-- run_hidden.vbs
-|   |-- req.txt
-|   |-- env/
-|   `-- src/
-|       |-- __init__.py
-|       `-- main.py
-`-- MacOS/
-    |-- README_MACOS.md
-    |-- run.sh
-    |-- run_terminal.command
-    |-- run_gui.command
-    `-- run_gui.applescript
+`-- Windows/
+    |-- README_WINDOWS.md
+    |-- run.bat
+    |-- run_terminal.vbs
+    |-- run_hidden.vbs
+    |-- req.txt
+    |-- env/
+    `-- src/
+        |-- __init__.py
+        `-- main.py
 ```
 
 Required files:
