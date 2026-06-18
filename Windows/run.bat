@@ -635,6 +635,8 @@ rem ==================================================
 rem Application execution
 rem ==================================================
 :run_application
+cls
+
 if "%RUN_MODE%"=="module" (
     "%VENV_PY%" -m "%RUN_TARGET%" %APP_ARGS%
     exit /b %ERRORLEVEL%

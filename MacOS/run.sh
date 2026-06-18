@@ -576,6 +576,10 @@ run_application() {
     echo "Starting application..."
     echo
 
+    if [ -t 1 ] && command -v clear >/dev/null 2>&1; then
+        clear
+    fi
+
     if [ "$RUN_MODE" = "module" ]; then
         "$VENV_PYTHON" -m "$RUN_TARGET" "${APP_ARGS[@]}"
         exit_code="$?"
